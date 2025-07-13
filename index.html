@@ -142,7 +142,7 @@
   const welcome = document.getElementById('welcome');
   const birthday = document.getElementById('birthday');
   const audio = document.getElementById('bgMusic');
-  const target = new Date('July 13, 2025 08:36:00').getTime();
+  const target = new Date('July 13, 2025 08:45:00').getTime();
 
   const timer = setInterval(() => {
     const now = Date.now(), diff = target - now;
@@ -170,13 +170,16 @@
     countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s left!`;
   }, 500);
 
-  openBtn.onclick = () => {
+  openBtn.addEventListener('click', openSurprise);
+  openBtn.addEventListener('touchstart', openSurprise);
+
+  function openSurprise() {
     welcome.classList.add('hidden');
     birthday.classList.remove('hidden');
     audio.play().catch(e => console.log("Autoplay blocked:", e));
     startConfetti();
     startSlideshow();
-  };
+  }
 
   function startSlideshow() {
     const slides = document.querySelectorAll('.slide');
