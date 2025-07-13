@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Happy Birthday Geetudi ❤️✨</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body, html {
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffe6f0;
+      color: #d63384;
+      font-size: 16px;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    .hidden { display: none; }
+    .fade-in { animation: fadeIn 2s forwards; }
+    @keyframes fadeIn { from {opacity: 0} to {opacity: 1} }
+
+    .button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      border-radius: 30px;
+      cursor: pointer;
+      animation: pulse 2s infinite;
+      margin-top: 20px;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    #bomb {
+      font-size: 4rem;
+      opacity: 0;
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    #bomb.exploded {
+      opacity: 1;
+      transform: scale(1.2);
+      animation: shake 0.4s infinite alternate;
+    }
+    @keyframes shake {
+      from { transform: translate(-2px, -2px) rotate(2deg); }
+      to   { transform: translate(2px, 2px) rotate(-2deg); }
+    }
+
+    .flash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: white;
+      opacity: 1;
+      z-index: 999;
+      animation: flashFade 1.5s ease-out forwards;
+    }
+    @keyframes flashFade {
+      to { opacity: 0; display: none; }
+    }
+
+    .slideshow-container {
+      width: 100%;
+      max-width: 100%;
+      margin: 20px auto;
+      padding: 10px;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+      height: auto;
+      max-height: 80vh;
+      object-fit: contain;
+      margin: 0 auto;
+      border-radius: 20px;
+      background: white;
+    }
+    .slide.active {
+      display: block;
+      animation: fadeSlide 1s ease-in-out;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+
+<div id="welcome" class="center">
+  <h1>🎁 A Surprise For You…</h1>
+  <p id="countdown"></p>
+  <div id="bomb" class="hidden">💣</div>
+  <button id="openBtn" class="button hidden">🔓 Open</button>
+</div>
+
+<div id="birthday" class="center hidden">
+  <h1 class="fade-in">🎉 Happy Birthday Geetudi ❤️✨</h1>
+  <p class="fade-in">To the most beautiful soul, my Geetudi…<br/>From Avi with love 💖</p>
+
+  <div class="slideshow-container fade-in">
+    <img class="slide" src="https://raw.githubusercontent.com/GeetaVadnere/Birthday-/main/IMG_20250626_173011_233.jpg" alt="1">
+    <img class="slide" src="https://raw.githubusercontent.com/GeetaVadnere/Birthday-/main/IMG_20250626_173013_501.jpg" alt="2">
+    <img class="slide" src="https://raw.githubusercontent.com/GeetaVadnere/Birthday-/main/IMG_20250626_174412_792.jpg" alt="3">
+  </div>
+
+  <audio id="bgMusic" loop>
+    <source src="https://raw.githubusercontent.com/GeetaVadnere/Birthday-/main/Jugraafiya%20-%20Super%2030%20320%20Kbps.mp3" type="audio/mpeg">
+  </audio>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+  const countdownEl = document.getElementById('countdown');
+  const bomb = document.getElementById('bomb');
+  const openBtn = document.getElementById('openBtn');
+  const welcome = document.getElementById('welcome');
+  const birthday = document.getElementById('birthday');
+  const audio = document.getElementById('bgMusic');
+  const target = new Date('June 24, 2025 00:00:00').getTime();
+
+  const timer = setInterval(() => {
+    const now = Date.now(), diff = target - now;
+    if (diff <= 0) {
+      clearInterval(timer);
+      countdownEl.textContent = "🎉 It's Time!";
+      bomb.classList.remove('hidden');
+      setTimeout(() => {
+        bomb.classList.add('exploded');
+        setTimeout(() => {
+          const flash = document.createElement('div');
+          flash.className = 'flash';
+          document.body.appendChild(flash);
+          setTimeout(() => {
+            openBtn.classList.remove('hidden');
+          }, 1500);
+        }, 1500);
+      }, 200);
+      return;
+    }
+    const d = Math.floor(diff / (1000 * 60 * 60 * 24)),
+          h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
+          s = Math.floor((diff % (1000 * 60)) / 1000);
+    countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s left!`;
+  }, 500);
+
+  openBtn.onclick = () => {
+    welcome.classList.add('hidden');
+    birthday.classList.remove('hidden');
+    audio.play().catch(e => console.log("Autoplay blocked:", e));
+    startConfetti();
+    startSlideshow();
+  };
+
+  function startSlideshow() {
+    const slides = document.querySelectorAll('.slide');
+    let index = 0;
+    function show(n) {
+      slides.forEach((s, i) => s.classList.toggle('active', i === n));
+    }
+    setInterval(() => {
+      index = (index + 1) % slides.length;
+      show(index);
+    }, 4000);
+    show(index);
+  }
+
+  function startConfetti() {
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const pieces = [];
+    for (let i = 0; i < 100; i++) {
+      pieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 7 + 3,
+        speed: Math.random() * 3 + 2,
+        angle: Math.random() * 2 * Math.PI,
+        color: `hsl(${Math.random() * 360}, 80%, 50%)`
+      });
+    }
+    (function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (const p of pieces) {
+        p.y += p.speed;
+        p.x += Math.sin(p.angle) * 2;
+        p.angle += 0.01;
+        if (p.y > canvas.height) p.y = -10;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size / 2);
+      }
+      requestAnimationFrame(animate);
+    })();
+  }
+</script>
+
+</body>
+</html>
