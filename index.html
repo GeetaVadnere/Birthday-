@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Happy Birthday Geetudi ❤️✨</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -128,7 +128,7 @@
     <img class="slide" src="https://raw.githubusercontent.com/GeetaVadnere/Birthday-/main/IMG_20250626_174412_792.jpg" alt="3">
   </div>
 
-  <audio id="bgMusic" loop>
+  <audio id="bgMusic" preload="auto">
     <source src="https://raw.githubusercontent.com/GeetaVadnere/Birthday-/main/Jugraafiya%20-%20Super%2030%20320%20Kbps.mp3" type="audio/mpeg">
   </audio>
 </div>
@@ -142,7 +142,13 @@
   const welcome = document.getElementById('welcome');
   const birthday = document.getElementById('birthday');
   const audio = document.getElementById('bgMusic');
-  const target = new Date('July 13, 2025 08:45:00').getTime();
+  const target = new Date('June 24, 2025 00:00:00').getTime();
+
+  function showOpenBtn() {
+    openBtn.classList.remove('hidden');
+    openBtn.addEventListener('click', openSurprise);
+    openBtn.addEventListener('touchstart', openSurprise);
+  }
 
   const timer = setInterval(() => {
     const now = Date.now(), diff = target - now;
@@ -156,9 +162,7 @@
           const flash = document.createElement('div');
           flash.className = 'flash';
           document.body.appendChild(flash);
-          setTimeout(() => {
-            openBtn.classList.remove('hidden');
-          }, 1500);
+          setTimeout(showOpenBtn, 1500);
         }, 1500);
       }, 200);
       return;
@@ -170,13 +174,11 @@
     countdownEl.textContent = `${d}d ${h}h ${m}m ${s}s left!`;
   }, 500);
 
-  openBtn.addEventListener('click', openSurprise);
-  openBtn.addEventListener('touchstart', openSurprise);
-
-  function openSurprise() {
+  function openSurprise(e) {
+    e.preventDefault();
     welcome.classList.add('hidden');
     birthday.classList.remove('hidden');
-    audio.play().catch(e => console.log("Autoplay blocked:", e));
+    audio.play().catch(e => console.log("Audio error:", e));
     startConfetti();
     startSlideshow();
   }
